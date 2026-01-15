@@ -1,0 +1,67 @@
+<!-- Hero Banner -->
+<div class="hero" style="margin-left: calc(-50vw + 50%); margin-right: calc(-50vw + 50%); width: 100vw;">
+    <div class="hero-content fade-in">
+        <h1>Automne-Hiver 2024</h1>
+        <p>L'élégance intemporelle</p>
+        <a href="#collection" class="btn">Découvrir la collection</a>
+    </div>
+</div>
+
+<div id="collection" class="container fade-in">
+    <div style="display: flex; justify-content: center; gap: 1rem; margin-bottom: 3rem;">
+        <a href="/products" class="btn" style="background: transparent; color: black; border: 1px solid #eee;">Tout</a>
+        <a href="/products?gender=femme" class="btn"
+            style="background: transparent; color: black; border: 1px solid #eee;">Femme</a>
+        <a href="/products?gender=homme" class="btn"
+            style="background: transparent; color: black; border: 1px solid #eee;">Homme</a>
+        <a href="/products?gender=enfant" class="btn"
+            style="background: transparent; color: black; border: 1px solid #eee;">Enfant</a>
+    </div>
+
+    <div class="product-grid">
+        <?php foreach ($products as $product): ?>
+            <div class="product-card delay-1">
+                <a href="/product?id=<?= $product->getId() ?>" style="text-decoration: none; color: inherit;">
+                    <div class="product-image">
+                        <img src="<?= htmlspecialchars($product->getImageUrl()) ?>"
+                            alt="<?= htmlspecialchars($product->getName()) ?>">
+                    </div>
+                    <div class="product-info">
+                        <div style="display: flex; justify-content: space-between; align-items: start;">
+                            <h3><?= htmlspecialchars($product->getName()) ?></h3>
+                            <?php if (isset($_SESSION['user_id'])): ?>
+                                <?php
+                                $isFav = \Mini\Models\Favorite::exists($_SESSION['user_id'], $product->getId());
+                                ?>
+                                <form action="/favorite/toggle" method="POST" style="display:inline;">
+                                    <input type="hidden" name="product_id" value="<?= $product->getId() ?>">
+                                    <button type="submit"
+                                        style="background:none; border:none; cursor:pointer; font-size: 1.2rem; color: <?= $isFav ? 'red' : '#ccc' ?>;">
+                                        <?= $isFav ? '❤️' : '🤍' ?>
+                                    </button>
+                                </form>
+                            <?php endif; ?>
+                        </div>
+                        <p class="price"><?= number_format($product->getPrice(), 2) ?> €</p>
+
+                        <?php
+                        $stock = $product->getStock();
+                        $stockColor = 'green';
+                        $stockText = 'En stock';
+                        if ($stock == 0) {
+                            $stockColor = 'red';
+                            $stockText = 'Rupture';
+                        } elseif ($stock < 5) {
+                            $stockColor = 'orange';
+                            $stockText = 'Peu de stock';
+                        }
+                        ?>
+                        <p style="font-size: 0.8rem; color: <?= $stockColor ?>; margin-top: 0.5rem;">
+                            <?= $stockText ?>
+                        </p>
+                    </div>
+                </a>
+            </div>
+        <?php endforeach; ?>
+    </div>
+</div>

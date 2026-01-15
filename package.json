@@ -1,0 +1,10 @@
+{
+    "name": "ecommerce-vanilla",
+    "version": "1.0.0",
+    "description": "E-commerce project in vanilla PHP",
+    "scripts": {
+        "dev": "php -S localhost:8000 -t public public/index.php"
+    },
+    "author": "",
+    "license": "MIT"
+}

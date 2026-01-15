@@ -1,0 +1,13 @@
+{
+    "name": "ecommerce/vanilla",
+    "description": "E-commerce project in vanilla PHP",
+    "type": "project",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Mini\\": "app/"
+        }
+    },
+    "minimum-stability": "stable",
+    "license": "MIT"
+}
