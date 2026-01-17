@@ -46,12 +46,24 @@ class CartController extends Controller
         }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (!\Mini\Core\Csrf::validateToken($_POST['csrf_token'] ?? '')) {
+                $this->redirect($_SERVER['HTTP_REFERER'] ?? '/products');
+            }
             $productId = (int) $_POST['product_id'];
             $quantity = (int) $_POST['quantity'];
             $size = $_POST['size'] ?? null;
 
             $cart = $this->getCart();
             $cart->addItem($productId, $quantity, $size);
+
+            if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+                header('Content-Type: application/json');
+                echo json_encode([
+                    'success' => true,
+                    'cartCount' => Cart::countItems($_SESSION['user_id'])
+                ]);
+                return;
+            }
 
             $this->redirect('/cart');
         }
@@ -64,6 +76,9 @@ class CartController extends Controller
         }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (!\Mini\Core\Csrf::validateToken($_POST['csrf_token'] ?? '')) {
+                $this->redirect('/cart');
+            }
             $productId = (int) $_POST['product_id'];
 
             $cart = $this->getCart();

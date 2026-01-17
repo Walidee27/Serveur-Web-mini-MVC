@@ -38,7 +38,13 @@ Le projet suit le pattern **MVC (Modèle-Vue-Contrôleur)** :
 Accessible via `/admin` (rôle 'admin' requis).
 -   **Dashboard** : Statistiques clés (CA, nombre de commandes, utilisateurs, produits) et dernières commandes.
 -   **Gestion Produits** : Création, Modification, Suppression de produits.
+    -   **Upload d'images** : Chargement direct des images produits (stockage local).
 -   **Gestion Commandes** : Voir le détail (articles + tailles), changer le statut (En attente, Validée, Expédiée, Annulée).
+
+### 🛡️ Sécurité & Performance
+-   **Protection CSRF** : Système complet de jetons pour sécuriser tous les formulaires.
+-   **AJAX** : Interactions fluides sans rechargement de page (Ajout au panier, Favoris).
+-   **Upload Sécurisé** : Validation des types MIME et renommage unique des fichiers.
 
 ## 🛠️ Installation
 
@@ -86,7 +92,7 @@ Pour tester l'application, vous pouvez utiliser les comptes suivants (créés pa
 /
 ├── app/
 │   ├── Controllers/    # Logique de l'application (Admin, Auth, Cart, Product...)
-│   ├── Core/           # Cœur du framework (Router, Model, Database...)
+│   ├── Core/           # Cœur du framework (Router, Model, Database, Csrf...)
 │   ├── Models/         # Représentation des données (User, Product, Order...)
 │   └── Views/          # Templates HTML (admin/, auth/, cart/, home/, products/...)
 ├── public/

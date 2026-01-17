@@ -9,6 +9,7 @@
     <?php endif; ?>
 
     <form action="/register" method="POST">
+        <?= \Mini\Core\Csrf::renderInput() ?>
         <div class="form-group">
             <label>Prénom</label>
             <input type="text" name="first_name" required>

@@ -64,6 +64,7 @@
             </p>
 
             <form action="" method="POST">
+                <?= \Mini\Core\Csrf::renderInput() ?>
                 <div class="form-group">
                     <label>Statut</label>
                     <select name="status" style="width: 100%; padding: 10px; margin-top: 0.5rem;">

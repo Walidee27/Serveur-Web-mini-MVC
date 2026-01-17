@@ -16,7 +16,7 @@
                 <div class="nav-links">
                     <a href="/collections">Collections</a>
                     <?php if (isset($_SESSION['user_id'])): ?>
-                        <a href="/cart">Panier</a>
+                        <a href="/cart">Panier <span id="cart-count" style="background: #333; color: white; padding: 2px 6px; border-radius: 50%; font-size: 0.8rem;"><?= \Mini\Models\Cart::countItems($_SESSION['user_id']) ?></span></a>
                         <a href="/orders">Commandes</a>
                         <?php if (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin'): ?>
                             <a href="/admin" style="color: red;">Admin</a>
@@ -69,6 +69,7 @@
                     <h3>Newsletter</h3>
                     <p style="color: #999; margin-bottom: 1rem;">Inscrivez-vous pour recevoir nos actualités.</p>
                     <form action="/newsletter/subscribe" method="POST" style="display: flex; gap: 10px;">
+                        <?= \Mini\Core\Csrf::renderInput() ?>
                         <input type="email" name="email" placeholder="Votre email" required
                             style="background: transparent; border: 1px solid #333; color: white; padding: 5px;">
                         <button type="submit" class="btn" style="padding: 5px 10px; font-size: 0.7rem;">OK</button>
@@ -92,6 +93,7 @@
             </div>
         </div>
     </footer>
+    <script src="/assets/js/app.js"></script>
 </body>
 
 </html>

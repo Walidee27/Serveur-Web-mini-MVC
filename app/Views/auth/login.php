@@ -9,6 +9,7 @@
     <?php endif; ?>
 
     <form action="/login" method="POST">
+        <?= \Mini\Core\Csrf::renderInput() ?>
         <div class="form-group">
             <label>Email</label>
             <input type="email" name="email" required>

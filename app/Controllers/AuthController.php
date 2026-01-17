@@ -20,6 +20,11 @@ class AuthController extends Controller
     public function register()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (!\Mini\Core\Csrf::validateToken($_POST['csrf_token'] ?? '')) {
+                $this->render('auth/register', ['error' => 'Invalid CSRF token', 'title' => 'Inscription']);
+                return;
+            }
+
             if (User::findByEmail($_POST['email'])) {
                 $this->render('auth/register', ['error' => 'Email already registered', 'title' => 'Inscription']);
                 return;
@@ -42,6 +47,11 @@ class AuthController extends Controller
     public function login()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (!\Mini\Core\Csrf::validateToken($_POST['csrf_token'] ?? '')) {
+                $this->render('auth/login', ['error' => 'Invalid CSRF token', 'title' => 'Connexion']);
+                return;
+            }
+
             $user = User::findByEmail($_POST['email']);
 
             if ($user && password_verify($_POST['password'], $user->getPassword())) {

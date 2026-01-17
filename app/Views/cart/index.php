@@ -39,6 +39,7 @@
                         <td><?= number_format($item['price'] * $item['quantity'], 2) ?> €</td>
                         <td>
                             <form action="/cart/remove" method="POST" style="margin: 0;">
+                                <?= \Mini\Core\Csrf::renderInput() ?>
                                 <input type="hidden" name="product_id" value="<?= $item['product_id'] ?>">
                                 <button type="submit"
                                     style="background: none; border: none; text-decoration: underline; cursor: pointer; font-size: 0.8rem;">Supprimer</button>
@@ -57,6 +58,7 @@
                     <h3>Total</h3>
                     <p class="total-price"><?= number_format($total, 2) ?> €</p>
                     <form action="/payment/checkout" method="POST">
+                        <?= \Mini\Core\Csrf::renderInput() ?>
                         <button type="submit" class="btn btn-block">Payer par Carte Bancaire</button>
                     </form>
                 </div>

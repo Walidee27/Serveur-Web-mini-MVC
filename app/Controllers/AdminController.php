@@ -71,6 +71,9 @@ class AdminController extends Controller
         }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (!\Mini\Core\Csrf::validateToken($_POST['csrf_token'] ?? '')) {
+                $this->redirect("/admin/orders/view?id=$id");
+            }
             $status = $_POST['status'];
             Order::updateStatus($id, $status);
             $this->redirect("/admin/orders/view?id=$id");
@@ -83,12 +86,22 @@ class AdminController extends Controller
     {
         $this->checkAdmin();
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (!\Mini\Core\Csrf::validateToken($_POST['csrf_token'] ?? '')) {
+                $this->render('admin/products/form', ['title' => 'Nouveau Produit', 'error' => 'Invalid CSRF token']);
+                return;
+            }
             $product = new Product();
             $product->setName($_POST['name']);
             $product->setDescription($_POST['description']);
             $product->setPrice($_POST['price']);
             $product->setStock($_POST['stock']);
-            $product->setImageUrl($_POST['image_url']);
+            $product->setPrice($_POST['price']);
+            $product->setStock($_POST['stock']);
+
+            $imagePath = $this->handleUpload();
+            $product->setImageUrl($imagePath ?? 'https://via.placeholder.com/600x800?text=No+Image');
+
+            $product->setCategoryId($_POST['category_id']);
             $product->setCategoryId($_POST['category_id']);
             $product->setGender($_POST['gender']);
             $product->save();
@@ -107,11 +120,21 @@ class AdminController extends Controller
         $product = Product::find($id);
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (!\Mini\Core\Csrf::validateToken($_POST['csrf_token'] ?? '')) {
+                $this->render('admin/products/form', ['product' => $product, 'title' => 'Modifier Produit', 'error' => 'Invalid CSRF token']);
+                return;
+            }
             $product->setName($_POST['name']);
             $product->setDescription($_POST['description']);
             $product->setPrice($_POST['price']);
             $product->setStock($_POST['stock']);
-            $product->setImageUrl($_POST['image_url']);
+            $product->setPrice($_POST['price']);
+            $product->setStock($_POST['stock']);
+
+            $imagePath = $this->handleUpload();
+            $product->setImageUrl($imagePath ?? $_POST['current_image_url']);
+
+            $product->setCategoryId($_POST['category_id']);
             $product->setCategoryId($_POST['category_id']);
             $product->setGender($_POST['gender']);
             $product->save(); // Will call update() internally
@@ -131,5 +154,29 @@ class AdminController extends Controller
             }
         }
         $this->redirect('/admin/products');
+    }
+    private function handleUpload()
+    {
+        if (isset($_FILES['image_file']) && $_FILES['image_file']['error'] === UPLOAD_ERR_OK) {
+            $file = $_FILES['image_file'];
+            $allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+
+            if (!in_array($file['type'], $allowedTypes)) {
+                return null; // Invalid type
+            }
+
+            $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+            $filename = uniqid('prod_') . '.' . $ext;
+            $uploadDir = __DIR__ . '/../../public/uploads/products/';
+
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0777, true);
+            }
+
+            if (move_uploaded_file($file['tmp_name'], $uploadDir . $filename)) {
+                return '/uploads/products/' . $filename;
+            }
+        }
+        return null;
     }
 }

@@ -10,6 +10,9 @@ class NewsletterController extends Controller
     public function subscribe()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (!\Mini\Core\Csrf::validateToken($_POST['csrf_token'] ?? '')) {
+                $this->redirect($_SERVER['HTTP_REFERER'] ?? '/');
+            }
             $email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
             $redirectUrl = $_SERVER['HTTP_REFERER'] ?? '/';
 

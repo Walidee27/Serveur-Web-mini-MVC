@@ -88,4 +88,18 @@ class Cart extends Model
         $stmt = $pdo->prepare("DELETE FROM cart_items WHERE cart_id = :cart_id");
         $stmt->execute(['cart_id' => $this->id]);
     }
+
+    public static function countItems(int $userId)
+    {
+        $pdo = Database::getPDO();
+        $sql = "
+            SELECT SUM(quantity) 
+            FROM cart_items ci
+            JOIN carts c ON ci.cart_id = c.id
+            WHERE c.user_id = :user_id
+        ";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute(['user_id' => $userId]);
+        return (int) $stmt->fetchColumn();
+    }
 }

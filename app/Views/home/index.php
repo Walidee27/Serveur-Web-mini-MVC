@@ -31,6 +31,7 @@
                                 $isFav = \Mini\Models\Favorite::exists($_SESSION['user_id'], $product->getId());
                                 ?>
                                 <form action="/favorite/toggle" method="POST" style="display:inline;">
+                                    <?= \Mini\Core\Csrf::renderInput() ?>
                                     <input type="hidden" name="product_id" value="<?= $product->getId() ?>">
                                     <button type="submit"
                                         style="background:none; border:none; cursor:pointer; font-size: 1.2rem; color: <?= $isFav ? 'red' : '#ccc' ?>;">

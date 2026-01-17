@@ -20,6 +20,14 @@ class FavoriteController extends Controller
         }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (!\Mini\Core\Csrf::validateToken($_POST['csrf_token'] ?? '')) {
+                if ($this->isAjax()) {
+                    http_response_code(403);
+                    echo json_encode(['error' => 'Invalid CSRF token']);
+                    return;
+                }
+                $this->redirect($_SERVER['HTTP_REFERER'] ?? '/products');
+            }
             $productId = (int) $_POST['product_id'];
             $userId = $_SESSION['user_id'];
 

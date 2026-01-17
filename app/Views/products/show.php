@@ -19,6 +19,7 @@
 
             <?php if (isset($_SESSION['user_id'])): ?>
                 <form action="/cart/add" method="POST" style="margin: 0; max-width: 100%;">
+                    <?= \Mini\Core\Csrf::renderInput() ?>
                     <input type="hidden" name="product_id" value="<?= $product->getId() ?>">
 
                     <div style="margin-bottom: 2rem;">
