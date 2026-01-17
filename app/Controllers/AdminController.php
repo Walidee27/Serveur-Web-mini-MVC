@@ -27,15 +27,15 @@ class AdminController extends Controller
         $this->checkAdmin();
 
         // Simple stats
-        $pdo = Database::getPDO();
         $stats = [
-            'products' => $pdo->query("SELECT COUNT(*) FROM products")->fetchColumn(),
-            'orders' => $pdo->query("SELECT COUNT(*) FROM orders")->fetchColumn(),
-            'revenue' => $pdo->query("SELECT SUM(total_price) FROM orders WHERE status != 'cancelled'")->fetchColumn() ?: 0,
-            'users' => $pdo->query("SELECT COUNT(*) FROM users")->fetchColumn()
+            'products' => Product::count(),
+            'orders' => Order::count(),
+            'revenue' => Order::sumRevenue(),
+            'users' => User::count()
         ];
 
-        $recentOrders = $pdo->query("SELECT * FROM orders ORDER BY created_at DESC LIMIT 5")->fetchAll();
+        $recentOrders = Order::findAll(); // Getting all for now, could optimize to get only 5 if needed but findAll is fine for mini_mvc
+        $recentOrders = array_slice($recentOrders, 0, 5); // Just slice it here
 
         $this->render('admin/dashboard', [
             'stats' => $stats,
@@ -54,8 +54,7 @@ class AdminController extends Controller
     public function orders()
     {
         $this->checkAdmin();
-        $pdo = Database::getPDO();
-        $orders = $pdo->query("SELECT * FROM orders ORDER BY created_at DESC")->fetchAll();
+        $orders = Order::findAll();
         $this->render('admin/orders/index', ['orders' => $orders, 'title' => 'Gestion Commandes']);
     }
 
@@ -66,23 +65,18 @@ class AdminController extends Controller
         if (!$id)
             $this->redirect('/admin/orders');
 
-        $pdo = Database::getPDO();
-        $order = $pdo->query("SELECT * FROM orders WHERE id = $id")->fetch();
-        $items = $pdo->query("
-            SELECT oi.*, p.name, p.image_url 
-            FROM order_items oi 
-            LEFT JOIN products p ON oi.product_id = p.id 
-            WHERE oi.order_id = $id
-        ")->fetchAll();
+        $data = Order::findWithItems($id);
+        if (!$data) {
+            $this->redirect('/admin/orders');
+        }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $status = $_POST['status'];
-            $stmt = $pdo->prepare("UPDATE orders SET status = :status WHERE id = :id");
-            $stmt->execute(['status' => $status, 'id' => $id]);
+            Order::updateStatus($id, $status);
             $this->redirect("/admin/orders/view?id=$id");
         }
 
-        $this->render('admin/orders/view', ['order' => $order, 'items' => $items, 'title' => 'Détail Commande #' . $id]);
+        $this->render('admin/orders/view', ['order' => $data['order'], 'items' => $data['items'], 'title' => 'Détail Commande #' . $id]);
     }
 
     public function productCreate()
@@ -131,9 +125,10 @@ class AdminController extends Controller
         $this->checkAdmin();
         $id = $_GET['id'] ?? null;
         if ($id) {
-            $pdo = Database::getPDO();
-            $stmt = $pdo->prepare("DELETE FROM products WHERE id = :id");
-            $stmt->execute(['id' => $id]);
+            $product = Product::find($id);
+            if ($product) {
+                $product->delete();
+            }
         }
         $this->redirect('/admin/products');
     }

@@ -94,3 +94,7 @@ INSERT INTO products (name, description, price, stock, image_url, category_id) V
 ('Robe d''été', 'Robe légère à fleurs, idéale pour la saison.', 39.99, 30, 'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', 2),
 ('Sac à main', 'Sac en cuir véritable, finition luxe.', 129.99, 10, 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', 3),
 ('Montre Classique', 'Montre minimaliste avec bracelet en cuir.', 89.99, 20, 'https://images.unsplash.com/photo-1524592094714-0f0654e20314?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', 3);
+
+-- Insert default admin user (password: admin123)
+INSERT INTO users (email, password, first_name, last_name, role) VALUES 
+('admin@maisonluxe.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Admin', 'User', 'admin');

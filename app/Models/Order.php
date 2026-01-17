@@ -110,4 +110,47 @@ class Order extends Model
             return false;
         }
     }
+    public static function count()
+    {
+        $pdo = Database::getPDO();
+        return (int) $pdo->query("SELECT COUNT(*) FROM orders")->fetchColumn();
+    }
+
+    public static function sumRevenue()
+    {
+        $pdo = Database::getPDO();
+        return (float) $pdo->query("SELECT SUM(total_price) FROM orders WHERE status != 'cancelled'")->fetchColumn();
+    }
+
+    public static function findAll()
+    {
+        $pdo = Database::getPDO();
+        $stmt = $pdo->query("SELECT * FROM orders ORDER BY created_at DESC");
+        $stmt->setFetchMode(PDO::FETCH_CLASS, self::class);
+        return $stmt->fetchAll();
+    }
+
+    public static function findWithItems($id)
+    {
+        $pdo = Database::getPDO();
+        $order = $pdo->query("SELECT * FROM orders WHERE id = $id")->fetch();
+        if (!$order)
+            return null;
+
+        $items = $pdo->query("
+            SELECT oi.*, p.name, p.image_url 
+            FROM order_items oi 
+            LEFT JOIN products p ON oi.product_id = p.id 
+            WHERE oi.order_id = $id
+        ")->fetchAll();
+
+        return ['order' => $order, 'items' => $items];
+    }
+
+    public static function updateStatus($id, $status)
+    {
+        $pdo = Database::getPDO();
+        $stmt = $pdo->prepare("UPDATE orders SET status = :status WHERE id = :id");
+        return $stmt->execute(['status' => $status, 'id' => $id]);
+    }
 }

@@ -107,4 +107,9 @@ class User extends Model
         }
         return false;
     }
+    public static function count()
+    {
+        $pdo = Database::getPDO();
+        return (int) $pdo->query("SELECT COUNT(*) FROM users")->fetchColumn();
+    }
 }

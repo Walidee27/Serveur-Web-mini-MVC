@@ -19,10 +19,7 @@ class PaymentController extends Controller
             $this->redirect('/cart');
         }
 
-        // Create instance to get items
-        $cartModel = new Cart();
-        $cartModel->setId($cart['id']);
-        $items = $cartModel->getItems();
+        $items = $cart->getItems();
 
         if (empty($items)) {
             $this->redirect('/cart');
@@ -53,9 +50,7 @@ class PaymentController extends Controller
 
         $cart = Cart::findByUserId($_SESSION['user_id']);
         if ($cart) {
-            $cartModel = new Cart();
-            $cartModel->setId($cart['id']);
-            $items = $cartModel->getItems();
+            $items = $cart->getItems();
 
             if (!empty($items)) {
                 $total = 0;
@@ -67,7 +62,7 @@ class PaymentController extends Controller
                 $orderId = Order::createWithItems($_SESSION['user_id'], $total, $items);
 
                 // Clear cart
-                $cartModel->clear();
+                $cart->clear();
 
                 $this->render('orders/success', ['orderId' => $orderId]);
                 return;

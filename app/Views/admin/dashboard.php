@@ -47,16 +47,16 @@
                     <?php foreach ($recentOrders as $order): ?>
                         <tr style="border-bottom: 1px solid #eee;">
                             <td style="padding: 1rem 0;">#
-                                <?= $order['id'] ?>
+                                <?= $order->getId() ?>
                             </td>
                             <td style="padding: 1rem 0;">
-                                <?= number_format($order['total_price'], 2) ?> €
+                                <?= number_format($order->getTotalPrice(), 2) ?> €
                             </td>
                             <td style="padding: 1rem 0;">
-                                <?= ucfirst($order['status']) ?>
+                                <?= ucfirst($order->getStatus()) ?>
                             </td>
                             <td style="padding: 1rem 0;">
-                                <?= date('d/m/Y', strtotime($order['created_at'])) ?>
+                                <?= date('d/m/Y', strtotime($order->getCreated_at())) ?>
                             </td>
                         </tr>
                     <?php endforeach; ?>

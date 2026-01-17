@@ -192,4 +192,10 @@ class Product extends Model
         $stmt = $pdo->prepare("DELETE FROM products WHERE id = :id");
         return $stmt->execute(['id' => $this->id]);
     }
+
+    public static function count()
+    {
+        $pdo = Database::getPDO();
+        return (int) $pdo->query("SELECT COUNT(*) FROM products")->fetchColumn();
+    }
 }

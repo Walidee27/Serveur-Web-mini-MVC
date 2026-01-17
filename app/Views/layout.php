@@ -68,11 +68,23 @@
                 <div class="footer-column">
                     <h3>Newsletter</h3>
                     <p style="color: #999; margin-bottom: 1rem;">Inscrivez-vous pour recevoir nos actualités.</p>
-                    <form action="#" style="display: flex; gap: 10px;">
-                        <input type="email" placeholder="Votre email"
+                    <form action="/newsletter/subscribe" method="POST" style="display: flex; gap: 10px;">
+                        <input type="email" name="email" placeholder="Votre email" required
                             style="background: transparent; border: 1px solid #333; color: white; padding: 5px;">
-                        <button type="button" class="btn" style="padding: 5px 10px; font-size: 0.7rem;">OK</button>
+                        <button type="submit" class="btn" style="padding: 5px 10px; font-size: 0.7rem;">OK</button>
                     </form>
+                    <?php if (isset($_GET['newsletter_success'])): ?>
+                        <p style="color: green; font-size: 0.8rem; margin-top: 5px;">Inscription réussie !</p>
+                    <?php elseif (isset($_GET['newsletter_error'])): ?>
+                        <?php
+                        $msg = 'Erreur inconnue';
+                        if ($_GET['newsletter_error'] == 'invalid_email')
+                            $msg = 'Email invalide';
+                        if ($_GET['newsletter_error'] == 'already_subscribed')
+                            $msg = 'Déjà inscrit';
+                        ?>
+                        <p style="color: red; font-size: 0.8rem; margin-top: 5px;"><?= $msg ?></p>
+                    <?php endif; ?>
                 </div>
             </div>
             <div class="footer-bottom">

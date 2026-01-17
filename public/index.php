@@ -92,6 +92,9 @@ $routes = [
     ['GET', '/privacy', [Mini\Controllers\PageController::class, 'privacy']],
     ['GET', '/cookies', [Mini\Controllers\PageController::class, 'cookies']],
     ['GET', '/legal', [Mini\Controllers\PageController::class, 'legal']],
+
+    // Newsletter
+    ['POST', '/newsletter/subscribe', [Mini\Controllers\NewsletterController::class, 'subscribe']],
 ];
 
 // Dispatch
